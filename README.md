@@ -704,6 +704,7 @@ Copy code
 With these steps, your questions and answers are now stored in appsettings.Development.json, and the accordion element is integrated into a Razor Page using the Dependency Injection (DI) pattern.
 
 
+![image](https://github.com/user-attachments/assets/1142590b-7670-4ced-8d80-7f44e1a2fba8)
 
 
 
