@@ -1,4 +1,4 @@
-# git-help
+# git-help -1
 Integrating an MVC element into a Razor Pages project, while ensuring the necessary configuration files and dependency injection (DI) are properly set up, can be achieved by following these steps:
 
 Include the MVC Element: Ensure the MVC element is accessible in your Razor Pages project. This typically involves referencing the necessary project or including the relevant files.
