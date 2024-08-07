@@ -708,4 +708,43 @@ With these steps, your questions and answers are now stored in appsettings.Devel
 
 
 
+<!-- Pages/Summary.cshtml -->
+@page
+@model DynamicTableExample.Pages.SummaryModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Summary Page";
+}
+
+<h2>Summary Page</h2>
+
+<form id="filterForm">
+    <input type="text" name="filter" value="@Model.CurrentFilter" placeholder="Filter by name" />
+    <select name="selectedName" id="selectedName">
+        <option value="">-- Select Name --</option>
+        @foreach (var option in Model.NameOptions)
+        {
+            <option value="@option.Value" @(option.Value == Model.SelectedName ? "selected" : "")>@option.Text</option>
+        }
+    </select>
+</form>
+
+<div id="tableContainer">
+    @await Html.PartialAsync("_TablePartial", Model.Items)
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('selectedName').addEventListener('change', function() {
+                var selectedName = this.value;
+                fetch(`@Url.Page("/Summary", "TablePartial")?selectedName=${encodeURIComponent(selectedName)}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('tableContainer').innerHTML = html;
+                    });
+            });
+        });
+    </script>
+}
 
