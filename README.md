@@ -790,3 +790,61 @@ public class Program
         return JsonSerializer.Serialize(jsonObject);
     }
 }
+
+using System;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public class Program
+{
+    public static void Main()
+    {
+        string jsonString = @"{
+            'content': '<h1>Hello, <strong>World!</strong></h1>',
+            'description': 'This is a <a href=\"#\">sample</a> description.'
+        }";
+
+        // Remove HTML tags from JSON
+        string cleanedJson = RemoveHtmlTagsInJson(jsonString);
+
+        Console.WriteLine(cleanedJson);
+    }
+
+    public static string RemoveHtmlTagsInJson(string jsonString)
+    {
+        // Deserialize the JSON string to a JObject
+        JObject jsonObject = JsonConvert.DeserializeObject<JObject>(jsonString);
+
+        // Recursively clean HTML tags in the JObject
+        CleanHtmlTags(jsonObject);
+
+        // Serialize the modified object back to JSON
+        return JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+    }
+
+    private static void CleanHtmlTags(JToken token)
+    {
+        if (token.Type == JTokenType.Object)
+        {
+            foreach (var property in token.Children<JProperty>())
+            {
+                CleanHtmlTags(property.Value);
+            }
+        }
+        else if (token.Type == JTokenType.Array)
+        {
+            foreach (var item in token.Children())
+            {
+                CleanHtmlTags(item);
+            }
+        }
+        else if (token.Type == JTokenType.String)
+        {
+            // Remove HTML tags from the string
+            string cleanedValue = Regex.Replace(token.ToString(), "<.*?>", string.Empty);
+            token.Replace(cleanedValue);
+        }
+    }
+}
+
