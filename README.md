@@ -748,3 +748,45 @@ With these steps, your questions and answers are now stored in appsettings.Devel
     </script>
 }
 
+using System;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+
+public class Program
+{
+    public static void Main()
+    {
+        var jsonData = new
+        {
+            content = "<h1>Hello, <strong>World!</strong></h1>"
+        };
+
+        // Convert the object to JSON string
+        string jsonString = JsonSerializer.Serialize(jsonData);
+
+        // Remove HTML tags
+        string cleanedJson = RemoveHtmlTagsInJson(jsonString);
+
+        Console.WriteLine(cleanedJson);
+    }
+
+    public static string RemoveHtmlTagsInJson(string jsonString)
+    {
+        // Deserialize the JSON string to a dynamic object
+        var jsonObject = JsonSerializer.Deserialize<dynamic>(jsonString);
+
+        // Remove HTML tags from each property
+        foreach (var property in jsonObject.GetType().GetProperties())
+        {
+            if (property.GetValue(jsonObject) is string strValue)
+            {
+                // Remove HTML tags using a regular expression
+                string cleanedValue = Regex.Replace(strValue, "<.*?>", string.Empty);
+                property.SetValue(jsonObject, cleanedValue);
+            }
+        }
+
+        // Serialize the modified object back to JSON
+        return JsonSerializer.Serialize(jsonObject);
+    }
+}
